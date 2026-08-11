@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Pinly Beta</title>
+  <meta name="description" content="Sign up for the Pinly closed beta test.">
+  <meta property="og:title" content="Pinly Beta">
+  <meta property="og:description" content="Sign up for the Pinly closed beta test.">
+  <meta property="og:type" content="website">
+  <style>
+    :root{
+      --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3;
+      --muted:#8b949e; --accent:#2f81f7; --accent-hover:#4d92f8;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6;margin:0;padding:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:620px;margin:56px auto;padding:32px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+    h1{margin:0 0 24px;font-size:1.9rem;letter-spacing:-0.02em}
+    h2{margin:0 0 10px;font-size:1rem;color:var(--text)}
+    a{color:var(--accent)}
+    a:hover{color:var(--accent-hover)}
+    .steps{margin:0;padding-left:20px;color:var(--muted);font-size:0.95rem}
+    .steps li{margin-bottom:6px}
+    .steps strong{color:var(--text);font-weight:600}
+    form{margin-top:28px}
+    label{display:block;font-weight:600;font-size:0.92rem;margin-bottom:6px}
+    input[type=email],input[type=text]{width:100%;padding:12px 14px;font:inherit;color:var(--text);background:#0d1117;border:1px solid var(--border);border-radius:8px}
+    input[type=email]::placeholder,input[type=text]::placeholder{color:#6e7681}
+    input[type=email]:focus,input[type=text]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,129,247,0.25)}
+    .field{margin-bottom:18px}
+    .hint{font-size:0.85rem;color:var(--muted);margin:6px 0 0}
+    .consent{display:flex;gap:10px;align-items:flex-start;font-size:0.88rem;color:var(--muted);margin-bottom:22px}
+    .consent input{margin-top:4px;flex:none;accent-color:var(--accent)}
+    .consent label{font-weight:400}
+    button{width:100%;padding:13px 18px;font:inherit;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:8px;cursor:pointer}
+    button:hover:not(:disabled){background:var(--accent-hover)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .msg{margin-top:16px;padding:12px 14px;border-radius:8px;font-size:0.92rem;display:none}
+    .msg.show{display:block}
+    .msg.ok{background:rgba(46,160,67,0.15);color:#7ee787;border:1px solid rgba(46,160,67,0.4)}
+    .msg.err{background:rgba(248,81,73,0.12);color:#ff9492;border:1px solid rgba(248,81,73,0.4)}
+    .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+    footer{font-size:0.85rem;color:var(--muted);margin-top:32px;border-top:1px solid var(--border);padding-top:18px}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Pinly Beta</h1>
+
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>Leave the address of <strong>your Google account</strong> — the one you use on your Android phone.</li>
+      <li>We add you to the tester list on Google Play.</li>
+      <li>You get an email with a link to install Pinly from the Play Store.</li>
+      <li>You use the app and tell us what breaks or what could be better.</li>
+    </ol>
+
+    <form id="beta-form" novalidate>
+      <div class="field">
+        <label for="email">Google account email</label>
+        <input type="email" id="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@gmail.com">
+        <p class="hint">It has to be the Google account you use on your phone — otherwise Google Play won't let you into the test.</p>
+      </div>
+
+      <div class="hp" aria-hidden="true">
+        <label for="company">Leave this field empty</label>
+        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="consent">
+        <input type="checkbox" id="consent" required>
+        <label for="consent">
+          I agree to my email address being processed so I can take part in the Pinly beta test.
+          I have read the <a href="privacy.html">privacy policy</a>. I can withdraw this consent at any time
+          by writing to <a href="mailto:pinlybiznes@gmail.com">pinlybiznes@gmail.com</a>.
+        </label>
+      </div>
+
+      <button type="submit" id="submit-btn">Sign me up</button>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </form>
+
+    <footer>
+      Your address is used only to add you to the test and to contact you about it. It is never used for
+      advertising, and we delete it once the test ends. Contact:
+      <a href="mailto:pinlybiznes@gmail.com">pinlybiznes@gmail.com</a> •
+      <a href="privacy.html">Privacy</a> • <a href="terms.html">Terms</a> • <a href="index.html">Home</a>
+    </footer>
+  </main>
+
+<script>
+(function () {
+  // ---------------------------------------------------------------------------
+  // CONFIG — SECRET must match SECRET in apps-script.gs. After changing either
+  // one, redeploy the script as a NEW VERSION or sign-ups will start failing.
+  // ---------------------------------------------------------------------------
+  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxiqaf2YcPGCFJJZADNg0dSH5PPbJllzthkcuWe0WMaJPI2GSnLiYil8tdOSl4yKeQ8gA/exec';
+  var SECRET   = '34NJJ4N33JNER';  // same string as SECRET in apps-script.gs
+  // ---------------------------------------------------------------------------
+
+  var form = document.getElementById('beta-form');
+  var btn = document.getElementById('submit-btn');
+  var msg = document.getElementById('msg');
+  var emailInput = document.getElementById('email');
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function show(kind, text) {
+    msg.className = 'msg show ' + kind;
+    msg.textContent = text;
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    msg.className = 'msg';
+
+    var email = emailInput.value.trim().toLowerCase();
+    if (!EMAIL_RE.test(email)) {
+      show('err', "That email address doesn't look right. Check it and try again.");
+      emailInput.focus();
+      return;
+    }
+    if (!document.getElementById('consent').checked) {
+      show('err', 'Please tick the consent box so we can sign you up.');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    var body = new URLSearchParams();
+    body.set('email', email);
+    body.set('hp', document.getElementById('company').value);
+    body.set('secret', SECRET);
+    body.set('source', 'beta.html');
+
+    fetch(ENDPOINT, { method: 'POST', body: body })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data || !data.ok) throw new Error((data && data.error) || 'unknown');
+        form.reset();
+        if (data.duplicate) {
+          show('ok', "You're already on the list — nothing else to do. We'll be in touch by email.");
+        } else {
+          show('ok', "You're on the beta tester list. We'll send the test invite to that address.");
+        }
+      })
+      .catch(function () {
+        show('err', 'Could not sign you up. Try again in a moment, or email pinlybiznes@gmail.com.');
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = 'Sign me up';
+      });
+  });
+})();
+</script>
+</body>
+</html>
